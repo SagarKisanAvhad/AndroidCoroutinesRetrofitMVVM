@@ -25,15 +25,13 @@ class ListViewModel: ViewModel() {
         loading.value = true
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
             val response = countryApi.getCountries()
-            withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-                    loading.value = false
-                    countryLoadError.value = ""
-                    countries.value = response.body()
+                    loading.postValue(false)
+                    countryLoadError.postValue("")
+                    countries.postValue(response.body())
                 } else {
                     onError(response.message())
                 }
-            }
 
         }
 
@@ -41,8 +39,8 @@ class ListViewModel: ViewModel() {
 
 
     private fun onError(message: String) {
-        countryLoadError.value = message
-        loading.value = false
+        countryLoadError.postValue(message)
+        loading.postValue(false)
     }
 
     override fun onCleared() {
